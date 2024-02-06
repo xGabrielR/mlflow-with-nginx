@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+
+  mlflow:
+    build: 
+      context: .
+      dockerfile: DockerfileMlflow
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    networks:
+      - mlflow_net
+    command: mlflow server --host 0.0.0.0 --port 5000 --default-artifact-root s3://${BUCKET_NAME} --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+
+  nginx:
+    build:
+      context: .
+      dockerfile: DockerfileNginx
+    depends_on:
+      - mlflow
+    networks:
+      - mlflow_net
+    ports:
+      - 5000:80
+
+networks:
+  mlflow_net:
+    driver: bridge
