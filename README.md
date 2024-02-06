@@ -19,3 +19,19 @@ Nginx passwd file, you can generate new one in this site: https://www.web2genera
 Current have user with 123 password in the file.
 
 After changes, just run `docker compose build && docker compose up`, and go to http://localhost:5000 (you can change this btw).
+
+After docker running, you can tracking with this sample code:
+
+```py
+import mlflow
+
+# NGINX Password Auth for MLFLOW in Env variable
+# Details at: https://mlflow.org/docs/latest/auth/index.html
+os.environ["MLFLOW_TRACKING_USERNAME"] = "user"
+os.environ["MLFLOW_TRACKING_PASSWORD"] = "123"
+
+# Tracking Uri
+mlflow.set_tracking_uri(f"http://localhost:5000/")
+print(f"Tracking Server URI: '{mlflow.get_tracking_uri()}'")
+
+```
